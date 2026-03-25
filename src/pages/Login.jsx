@@ -81,12 +81,6 @@ export default function Login() {
                 Secure transaction monitoring for faster document routing and clearer accountability.
               </p>
             </div>
-
-            <div className="rounded-xl border border-white/20 bg-white/10 p-4">
-              <p className="text-xs uppercase tracking-wide text-white/80 mb-2">Demo Password</p>
-              <p className="text-lg font-semibold">Demo@123</p>
-              <p className="text-xs text-white/80 mt-1">Used by all seeded demo accounts.</p>
-            </div>
           </div>
 
           <div className="p-6 sm:p-10 space-y-6 bg-card">
