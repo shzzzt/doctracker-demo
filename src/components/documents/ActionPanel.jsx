@@ -42,6 +42,14 @@ const MONEY_CLASSIFICATIONS = new Set([
   "Purchase Request",
 ]);
 
+const RELEASE_ONLY_CLASSIFICATIONS = new Set([
+  "Purchase Request",
+  "Travel Order/Itinerary of Travel",
+  "Vouchers",
+  "Program of Works/Budget Cost",
+  "Obligation Requests",
+]);
+
 export default function ActionPanel({ document, currentUser, onActionDone }) {
   const [activeAction, setActiveAction] = useState(null); // null | 'mark_received' | 'forward' | 'return' | 'sign' | 'release' | 'upload_memo' | 'upload_trip_ticket'
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -713,6 +721,7 @@ function getActionLabel(key) {
 function getForwardableUsers(allUsers, currentUser, document) {
   const userRole = currentUser?.role?.toUpperCase();
   const documentSection = document?.section?.toUpperCase();
+  const classification = document?.classification;
 
   if (userRole === "RECEIVING") {
     return allUsers.filter((u) => {
@@ -732,6 +741,12 @@ function getForwardableUsers(allUsers, currentUser, document) {
 
   if (userRole === "MAYOR") {
     const isMoneyClassification = MONEY_CLASSIFICATIONS.has(document?.classification);
+
+    if (RELEASE_ONLY_CLASSIFICATIONS.has(classification)) {
+      return allUsers.filter(
+        (u) => u.role?.toUpperCase() === "RELEASING" && u.email !== currentUser?.email
+      );
+    }
 
     if (document?.classification === "Communication Letter" && !isMoneyClassification) {
       return allUsers.filter(

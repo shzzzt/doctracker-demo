@@ -32,7 +32,6 @@ export default function AppLayout() {
     ...(currentUser?.role?.toUpperCase() === "RECEIVING"
       ? [{ label: "Add New Transaction", path: "/documents/new" }]
       : []),
-    { label: "Notifications", path: "/notifications" },
     { label: "Profile", path: "/profile" },
   ];
 

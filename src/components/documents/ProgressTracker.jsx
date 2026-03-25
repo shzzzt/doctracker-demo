@@ -28,8 +28,9 @@ export default function ProgressTracker({ status, document }) {
       )}
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {
-          const isCompleted = displayIndex > index;
-          const isCurrent = displayIndex === index;
+          const isFinalCompleted = status === "Released" && index === steps.length - 1;
+          const isCompleted = displayIndex > index || isFinalCompleted;
+          const isCurrent = displayIndex === index && !isFinalCompleted;
 
           return (
             <div key={step.key} className="flex items-center flex-1 last:flex-initial">
