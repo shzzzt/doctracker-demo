@@ -1,0 +1,52 @@
+{
+  "name": "DocumentAction",
+  "type": "object",
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "description": "ID of the document this action belongs to"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "Created",
+        "Forwarded",
+        "Received",
+        "Returned",
+        "Signed",
+        "Released",
+        "Memo Uploaded",
+        "Trip Ticket Uploaded"
+      ],
+      "description": "Type of action performed"
+    },
+    "from_user": {
+      "type": "string",
+      "description": "Email of user who performed the action"
+    },
+    "from_user_name": {
+      "type": "string",
+      "description": "Name of user who performed the action"
+    },
+    "to_user": {
+      "type": "string",
+      "description": "Email of user the document was sent to"
+    },
+    "to_user_name": {
+      "type": "string",
+      "description": "Name of user the document was sent to"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes or remarks for this action"
+    },
+    "new_status": {
+      "type": "string",
+      "description": "The new status after this action"
+    }
+  },
+  "required": [
+    "document_id",
+    "action_type"
+  ]
+}

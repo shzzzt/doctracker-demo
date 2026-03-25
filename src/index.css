@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --background: 0 0% 97%;
+    --foreground: 0 0% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 50% 96%;
+    --accent-foreground: 0 72% 41%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 72% 51%;
+    --chart-1: 0 72% 51%;
+    --chart-2: 0 50% 65%;
+    --chart-3: 0 30% 75%;
+    --chart-4: 0 15% 85%;
+    --chart-5: 0 0% 45%;
+    --radius: 0.75rem;
+    --sidebar-background: 0 72% 44%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 72% 44%;
+    --sidebar-accent: 0 72% 38%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 72% 50%;
+    --sidebar-ring: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 50% 15%;
+    --accent-foreground: 0 72% 65%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 72% 51%;
+    --chart-1: 0 72% 51%;
+    --chart-2: 0 50% 65%;
+    --chart-3: 0 30% 75%;
+    --chart-4: 0 15% 85%;
+    --chart-5: 0 0% 55%;
+    --sidebar-background: 0 72% 20%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 72% 44%;
+    --sidebar-accent: 0 72% 28%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 72% 30%;
+    --sidebar-ring: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+}

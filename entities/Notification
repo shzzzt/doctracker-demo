@@ -1,0 +1,54 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of user who should receive this notification"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Name of the recipient"
+    },
+    "document_id": {
+      "type": "string",
+      "description": "Related document id"
+    },
+    "control_number": {
+      "type": "string",
+      "description": "Document control number for display"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "FORWARDED",
+        "STATUS_CHANGED"
+      ],
+      "description": "Notification category"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification body"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notification is read"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When notification was marked read"
+    }
+  },
+  "required": [
+    "recipient_email",
+    "type",
+    "title",
+    "message"
+  ]
+}

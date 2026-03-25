@@ -1,0 +1,134 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "control_number": {
+      "type": "string",
+      "description": "Control number format: YYMDD### (e.g., 206001 for Feb 6, first document)"
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "Communication Letter",
+        "Purchase Request",
+        "Request Letter",
+        "Disbursement",
+        "Vouchers",
+        "Obligation Requests",
+        "Resolutions",
+        "Travel Order/Itinerary of Travel",
+        "Program of Works/Budget Cost",
+        "Solicitation Letter",
+        "Executive Orders",
+        "Ordinances",
+        "Memorandums"
+      ],
+      "description": "Type/classification of the document"
+    },
+    "section": {
+      "type": "string",
+      "enum": [
+        "COMMS",
+        "PROCUREMENT",
+        "MOBILIZATION",
+        "GENERAL"
+      ],
+      "default": "GENERAL",
+      "description": "Section/department that owns this document"
+    },
+    "particulars": {
+      "type": "string",
+      "description": "Description/subject of the document"
+    },
+    "source_office": {
+      "type": "string",
+      "description": "Office where the document originated"
+    },
+    "requestor": {
+      "type": "string",
+      "description": "Name of the person who requested"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount involved (if applicable)"
+    },
+    "received_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the document was received"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Pending Receipt",
+        "Forwarded",
+        "Received",
+        "Checking",
+        "For Signature",
+        "Signed",
+        "For Release",
+        "Released",
+        "Returned"
+      ],
+      "default": "Pending Receipt",
+      "description": "Current status of the document"
+    },
+    "physical_received": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the current holder has physically confirmed receipt"
+    },
+    "current_holder": {
+      "type": "string",
+      "description": "Email of the person currently holding the document"
+    },
+    "current_holder_name": {
+      "type": "string",
+      "description": "Name of the person currently holding the document"
+    },
+    "current_holder_role": {
+      "type": "string",
+      "description": "Role of the current holder (RECEIVING, PROCUREMENT, MOBILIZATION, MAYOR, RELEASING, RECORDS, COMMS)"
+    },
+    "forwarded_to": {
+      "type": "string",
+      "description": "Name of person it was forwarded to"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of the uploaded document scan"
+    },
+    "memo_file_url": {
+      "type": "string",
+      "description": "URL of the memorandum (for commu letters converted to memo)"
+    },
+    "trip_ticket_file_url": {
+      "type": "string",
+      "description": "URL of the trip ticket (for request letters handled by mobilization)"
+    },
+    "linked_document_id": {
+      "type": "string",
+      "description": "ID of linked document (memo linked to commu letter)"
+    },
+    "released_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the document was released"
+    },
+    "remarks": {
+      "type": "string",
+      "description": "Any additional remarks or notes"
+    },
+    "return_reason": {
+      "type": "string",
+      "description": "Reason for returning the document"
+    }
+  },
+  "required": [
+    "control_number",
+    "classification",
+    "particulars",
+    "received_date",
+    "status"
+  ]
+}
