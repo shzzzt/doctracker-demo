@@ -73,16 +73,6 @@ export default function DocumentDetail() {
     enabled: !!docId,
   });
 
-  const { data: linkedDoc } = useQuery({
-    queryKey: ["linked-doc", document?.linked_document_id],
-    queryFn: async () => {
-      if (!document?.linked_document_id) return null;
-      const docs = await base44.entities.Document.filter({ id: document.linked_document_id });
-      return docs[0];
-    },
-    enabled: !!document?.linked_document_id,
-  });
-
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ["document", docId] });
     queryClient.invalidateQueries({ queryKey: ["document-actions", docId] });
@@ -238,6 +228,8 @@ export default function DocumentDetail() {
     "Memo Uploaded": "bg-indigo-100 text-indigo-700",
     "Trip Ticket Uploaded": "bg-sky-100 text-sky-700",
   };
+
+  const roadmapActions = [...actions].reverse();
 
   return (
     <div className="p-8 space-y-6 max-w-5xl mx-auto">
@@ -407,49 +399,54 @@ export default function DocumentDetail() {
 
           {/* File Links */}
           <div className="flex flex-wrap gap-3 mt-6">
-            {document.file_url && (
-              <Button
-                variant="outline"
-                className="h-12 text-base gap-2"
-                onClick={() => openFile(document.file_url, "Document")}
-              >
-                <FileText className="w-5 h-5" />
-                View Document
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            )}
-            {document.memo_file_url && (
-              <Button
-                variant="outline"
-                className="h-12 text-base gap-2"
-                onClick={() => openFile(document.memo_file_url, "Memorandum")}
-              >
-                <FileUp className="w-5 h-5" />
-                View Memorandum
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            )}
-            {document.trip_ticket_file_url && (
-              <Button
-                variant="outline"
-                className="h-12 text-base gap-2"
-                onClick={() => openFile(document.trip_ticket_file_url, "Trip Ticket")}
-              >
-                <FileUp className="w-5 h-5" />
-                View Trip Ticket
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            )}
-            {linkedDoc && (
-              <Button
-                variant="outline"
-                className="h-12 text-base gap-2"
-                onClick={() => navigate(`/documents/${linkedDoc.id}`)}
-              >
-                <FileText className="w-5 h-5" />
-                View Linked Doc ({linkedDoc.control_number})
-              </Button>
-            )}
+            {(() => {
+              const memoLinks = Array.isArray(document.memo_file_urls)
+                ? document.memo_file_urls
+                : document.memo_file_url
+                ? [document.memo_file_url]
+                : [];
+
+              return (
+                <>
+                  {document.file_url && (
+                    <Button
+                      variant="outline"
+                      className="h-12 text-base gap-2"
+                      onClick={() => openFile(document.file_url, "Document")}
+                    >
+                      <FileText className="w-5 h-5" />
+                      View Document
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
+
+                  {memoLinks.map((memoUrl, index) => (
+                    <Button
+                      key={`memo-${index}`}
+                      variant="outline"
+                      className="h-12 text-base gap-2"
+                      onClick={() => openFile(memoUrl, `Memorandum ${index + 1}`)}
+                    >
+                      <FileUp className="w-5 h-5" />
+                      View Memorandum {memoLinks.length > 1 ? index + 1 : ""}
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  ))}
+
+                  {document.trip_ticket_file_url && (
+                    <Button
+                      variant="outline"
+                      className="h-12 text-base gap-2"
+                      onClick={() => openFile(document.trip_ticket_file_url, "Trip Ticket")}
+                    >
+                      <FileUp className="w-5 h-5" />
+                      View Trip Ticket
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </CardContent>
       </Card>
@@ -473,43 +470,52 @@ export default function DocumentDetail() {
           {actions.length === 0 ? (
             <p className="text-muted-foreground text-center py-6">No activity recorded yet</p>
           ) : (
-            <div className="space-y-4">
-              {actions.map((action) => (
-                <div key={action.id} className="flex gap-4 items-start">
-                  <div
-                    className={`px-2 py-1 rounded-lg text-xs font-bold flex-shrink-0 mt-1 ${
-                      actionLogColors[action.action_type] || "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {action.action_type}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-base">
-                      {action.new_status ? `→ ${action.new_status}` : ""}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      By{" "}
-                      <span className="font-medium">
-                        {action.from_user_name || action.from_user}
-                      </span>
-                      {action.to_user_name ? (
-                        <>
-                          {" "}→{" "}
-                          <span className="font-medium">{action.to_user_name}</span>
-                        </>
-                      ) : null}
-                    </p>
-                    {action.notes && (
-                      <p className="text-sm mt-1 text-muted-foreground">{action.notes}</p>
+            <div className="overflow-x-auto pb-2">
+              <div className="flex items-start gap-3 min-w-max">
+                {roadmapActions.map((action, index) => (
+                  <div key={action.id} className="flex items-start gap-3">
+                    <div className="w-[280px] rounded-xl border bg-card p-4 shadow-sm">
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span
+                          className={`px-2 py-1 rounded-lg text-xs font-bold ${
+                            actionLogColors[action.action_type] || "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {action.action_type}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">Step {index + 1}</span>
+                      </div>
+
+                      <p className="font-semibold text-sm mb-1">
+                        {action.new_status ? `Status: ${action.new_status}` : "Status updated"}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        By <span className="font-medium text-foreground">{action.from_user_name || action.from_user}</span>
+                        {action.to_user_name ? (
+                          <>
+                            {" "}→ <span className="font-medium text-foreground">{action.to_user_name}</span>
+                          </>
+                        ) : null}
+                      </p>
+
+                      {action.notes && (
+                        <p className="text-xs mt-2 text-muted-foreground leading-relaxed line-clamp-3">{action.notes}</p>
+                      )}
+
+                      <p className="text-[11px] text-muted-foreground mt-2">
+                        {action.created_date
+                          ? format(new Date(action.created_date), "MMM d, yyyy h:mm a")
+                          : ""}
+                      </p>
+                    </div>
+
+                    {index < roadmapActions.length - 1 && (
+                      <div className="pt-16 text-muted-foreground text-xl">→</div>
                     )}
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {action.created_date
-                        ? format(new Date(action.created_date), "MMM d, yyyy h:mm a")
-                        : ""}
-                    </p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
         </CardContent>

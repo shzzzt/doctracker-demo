@@ -327,13 +327,16 @@ export default function ActionPanel({ document, currentUser, onActionDone }) {
   };
 
   const doUploadMemo = async () => {
-    let memo_file_url = document.memo_file_url;
-    if (memoFile) {
-      const result = await base44.integrations.Core.UploadFile({ file: memoFile });
-      memo_file_url = result.file_url;
-    }
+    if (!memoFile) return;
+
+    const confirmed = window.confirm("Upload selected memorandum file?");
+    if (!confirmed) return;
+
+    const result = await base44.integrations.Core.UploadFile({ file: memoFile });
+    const uploadedMemoUrl = result.file_url;
+
     await base44.entities.Document.update(document.id, {
-      memo_file_url,
+      memo_file_url: uploadedMemoUrl,
       linked_document_id: document.linked_document_id || document.id,
     });
     await base44.entities.DocumentAction.create({
@@ -422,9 +425,16 @@ export default function ActionPanel({ document, currentUser, onActionDone }) {
         document.current_holder === currentUser?.email;
       return !!selectedUser && (!mustUploadReplacement || !!replacementFile);
     }
-    if (activeAction === "upload_memo") return !!memoFile || !!document.memo_file_url;
+    if (activeAction === "upload_memo") return !!memoFile;
     if (activeAction === "upload_trip_ticket") return !!tripTicketFile || !!document.trip_ticket_file_url;
     return true;
+  };
+
+  const removeMemoFile = () => {
+    if (!memoFile) return;
+    const confirmed = window.confirm(`Remove \"${memoFile.name}\" from upload field?`);
+    if (!confirmed) return;
+    setMemoFile(null);
   };
 
   return (
@@ -545,10 +555,24 @@ export default function ActionPanel({ document, currentUser, onActionDone }) {
               <Input
                 type="file"
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                onChange={(e) => setMemoFile(e.target.files[0])}
+                onChange={(e) => {
+                  const selected = e.target.files?.[0] || null;
+                  setMemoFile(selected);
+                }}
                 className="h-12 text-base cursor-pointer"
               />
-              <p className="text-sm text-muted-foreground">Accepts PDF, DOC, JPG, PNG. Upload and link the memorandum to this communication letter.</p>
+              {memoFile && (
+                <div className="rounded-lg border bg-muted/30 p-3 space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground">Selected file</p>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <span className="truncate">{memoFile.name}</span>
+                    <Button type="button" variant="outline" size="sm" onClick={removeMemoFile}>
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <p className="text-sm text-muted-foreground">Accepts PDF, DOC, JPG, PNG.</p>
             </div>
           )}
 
@@ -604,6 +628,7 @@ function getAvailableActions(doc, userRole, isHolder, isCommuLetter) {
   const actions = [];
   const isFinalized = status === "Released";
   const canReturn = !isFinalized;
+  const hasMemoFiles = !!doc.memo_file_url || (Array.isArray(doc.memo_file_urls) && doc.memo_file_urls.length > 0);
 
   if (userRole === "RECEIVING") {
     if (!isFinalized) {
@@ -676,7 +701,7 @@ function getAvailableActions(doc, userRole, isHolder, isCommuLetter) {
     if (!physReceived) {
       actions.push({ key: "mark_received", label: "✅ Mark as Received", style: "green" });
     }
-    if (isCommuLetter && !isFinalized) {
+    if (isCommuLetter && !isFinalized && !hasMemoFiles) {
       actions.push({ key: "upload_memo", label: "📝 Upload Memorandum", style: "darkgreen" });
     }
     if (physReceived && status === "Received") {
